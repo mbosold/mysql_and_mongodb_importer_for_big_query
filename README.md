@@ -1,10 +1,10 @@
 # Selective MySQL and MongoDB data import for Google BigQuery (Windows)
 
-Load data of multiple MySQL and MongoDB databases to Google BigQuery with the usage of table and column white/blacklisting.
+Automatically Load data of multiple MySQL and MongoDB databases to Google BigQuery with the usage of table and column white/blacklisting.
 
 ## Disclaimer
 
-* I do not consider myself a full-time programmer. I create this Python script to solve a specific problem for one of my clients. I’m thankful for every feedback to improve or simplify my code. If you would like to send some feedback, please feel free to email me at contact@datapriest.io 
+* I do not consider myself a full-time programmer. I create this Python script to solve a specific problem for one of my clients. I’m thankful for every feedback to improve or simplify my code. If you would like to send some feedback, please feel free to email me at contact@datapriest.io
 * Code documentation is aligned correctly when the files are viewed in editor “Atom.io”
 * I’m aware, that this script might not be the best option for all companies. There are many specialized software vendors (like Stitch or Fivetran) out there, to handle this workload in a managed way with SLAs
 * I’m not responsible for any results of this script e.g. bad decisions caused by wrong or bad data imports or infraction of the data privacy laws of your country
@@ -37,9 +37,13 @@ import.ipynb     | code variant as Jupyter Notebook for easier code editing, if 
 * For data privacy reasons, you should use the table and field whitelist feature. Therefore, it’s not recommended to sync all database tables including passwords, credit card details or other personal information without any white or blacklisting
 * Google BigQuery will not accept your MySQL and MongoDB data without any further transformation. This is why the transform_dataframe function renames columns, drops empty tables, etc..
 * Google BigQuery is able to create data schemas for the tables dynamically (configured by bigquery job settings). Unfortunately, this method is only taking a tiny part of your dataset to account for choosing the “right” field types. This can lead to wrong data types and therefore the function generate_bq_schema create the data fields dynamically out of the pandas dataframe. Unfortunately, Pandas dataframes can’t handle integer fields with NaN values and transform this fields to floats. This means, you might need to transform the related fields back to integers via Google BigQuery SQL
-* You should never store your credential information directly in the config file. You should always use an encrypted and secured way to store your credentials 
+* You should never store your credential information directly in the config file. You should always use an encrypted and secured way to store your credentials
 
-### Requirements 
+### Known Bugs
+
+* Pandas sets integer fields to float, if NAN values exists, this fields have to be transformed with BigQuery Views
+
+### Requirements
 
 * OS: Windows (tested with Windows Server 2016 Datacenter)
 * Language: Tested with Python 3.6.0 (Anaconda 4.3.1)
@@ -56,8 +60,10 @@ pip install numpy
 ```
 
 ### Setup
+1. clone repository or copy files to your local server
+* Remember the file folder path for windows scheduler task (later)
 
-1. Create Google Cloud JSON Key File
+2. Create Google Cloud JSON Key File
 * Login into Google Cloud Interface
 * Select your Google Cloud Project
 * Go to IAM Menu
@@ -67,34 +73,34 @@ pip install numpy
 * Store key file in one server folder
 * Remember the key file folder path for configuration file (later)
 
-2. Create Google Cloud Bucket
+3. Create Google Cloud Bucket
 * Go to: https://console.cloud.google.com/storage/
 * Create new bucket for CSV files
 * Remember the bucket name for configuration file (later)
 
-3. Create Google BigQuery Project
+4. Create Google BigQuery Project
 * Login into Google Cloud Interface
 * If not existing, create new Google BigQuery project
 * Remember the BigQuery project id for configuration file (later)
 
-4. Create Google BigQuery Dataset
+5. Create Google BigQuery Dataset
 * Go to: https://bigquery.cloud.google.com/
 * Create new data set (you can select EU as location)
 * Remember the BigQuery dataset id for configuration file (later)
 
-5. Create local cache folder
+6. Create local cache folder
 * Create a folder for all JSON and CSV files on your Windows server
 * Keep in mind, that you need enough space for all (maybe large) csv files
 * Remember the cache folder path for configuration file (later)
 
-6. Create local log folder
+7. Create local log folder
 * Create a folder for log files on your Windows server
 * Remember the log folder path for configuration file (later)
 
 7. Store credentials as Windows system variables
 * Set environment variables for the database credentials
 * Open command prompt on your Windows server
-* Use command to set variables e.g. 
+* Use command to set variables e.g.
 ```setx db1pw “password" /M```
 * A restart of your server is required afterwards
 
@@ -111,11 +117,11 @@ pip install numpy
 
 ### Configuration with import_config.py (edit file and save)
 
-If the configuration file (import_config) is set up correctly, 
-there is no further need to change anything in the actual script code (import.py). 
-As the configuration for all credentials, files, folders, whitelists and blacklists 
-can be quite complex, you should take your time to understand the architecture of the config file. 
-Edit the config file to edit the values of the following variables
+If the configuration file (import_config) is set up correctly,
+there is no further need to change anything in the actual script code (import.py).
+As the configuration for all credentials, files, folders, whitelists and blacklists
+can be quite complex, you should take your time to understand the architecture of the config file.
+Edit the config file to insert the values of the following variables
 ```
 general.log_file_folder,
 general.python_script_name [optional],
@@ -156,7 +162,7 @@ slack_hooks.slack_channel_1
 5. Enter a trigger like “Daily” –> “Repeat Task every 1 hour for a duration of indefinitely”
 6. Select “Action”: “Start a program”
 7. Enter path to python.exe for “Program Script”: e.g. “C:\ProgramData\Anaconda3\python.exe”
-8. Enter path to python file in “Add arguments”: e.g. "C:\Users\user_x\import.py"
+8. Enter path to python file in “Add arguments”: e.g. "C:\Users\<username>\import.py"
 9. Save your new scheduler task
 
 ## Own Ideas for further development
@@ -176,4 +182,3 @@ slack_hooks.slack_channel_1
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-

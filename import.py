@@ -1,21 +1,4 @@
-
 # coding: utf-8
-
-# ## Google BigQuery Importer for MySQL and MongoDB Data (Windows)
-
-# In[1]:
-
-
-
-
-# Author: Mark Bosold | datapriest.io
-# Last Updated: 2019/04/11
-# Status: in production
-# Current Bugs:
-# - Pandas sets integer fields to float, if NAN values exists, this fields have to be transformed with BigQuery Views
-
-# In[2]:
-
 # Import nessary libaries and load config file
 from sqlalchemy import create_engine
 from google.cloud import storage
@@ -32,9 +15,6 @@ import import_config as config
 import pymongo
 import numpy as np
 import sys
-
-
-# In[3]:
 
 # Function to connect to MySQL database, creates engine, create Panda dataframes for all tables, transform data and creates csv files in Google Cloud Storage
 def mysql_to_gcs():
@@ -78,9 +58,6 @@ def mysql_to_gcs():
                 # Upload local CSV File to Google Cloud Storage
                 upload_to_google_cloud_storage(file_name_csv,file_name_csv_path)
 
-
-# In[4]:
-
 # Function to connect to MongoDB database, creates engine, create Panda dataframes for all tables, transform data and creates csv files in Google Cloud Storage
 def mongo_to_gcs():
     # Iterate through all existing MongoDB databases of config file
@@ -122,9 +99,6 @@ def mongo_to_gcs():
                 # Upload local CSV File to Google Cloud Storage
                 upload_to_google_cloud_storage(file_name_csv,file_name_csv_path)
 
-
-# In[5]:
-
 # Function to read all objects of a given Google Cloud Storage Bucket and create Google BigQuery tables in a dataset for each
 def gcs_to_gbq():
     # Connect to Google Cloud Storage and set bucket
@@ -164,9 +138,6 @@ def gcs_to_gbq():
     # Send slack message when load job done
     send_message_to_slack(':bigquery: Backend Data Sync: Update DWH Data OK :thumbs-up-green:', config.slack_hooks['slack_channel_1'])
 
-
-# In[6]:
-
 # Function to create dynamic Google BigQuery data schema from pandas dataframe types
 # Create mapping between Pandas dataframe types and Google BigQuery field types
 def generate_bq_schema(dataframe, default_type='STRING'):
@@ -185,9 +156,6 @@ def generate_bq_schema(dataframe, default_type='STRING'):
         fields.append({'name': column_name,
                        'type': type_mapping.get(dtype.kind, default_type)})
     return {'fields': fields}
-
-
-# In[7]:
 
 # Function to apply column whitelisting/blacklisting and prepare fields for BigQuery upload
 def transform_dataframe(dataframe,table_name,use_field_whitelist,field_whitelist,use_field_blacklist,field_blacklist):
@@ -212,18 +180,12 @@ def transform_dataframe(dataframe,table_name,use_field_whitelist,field_whitelist
     dataframe.rename(columns=lambda x: x[1:] if (x[0]=='_') else x, inplace=True)
     return dataframe
 
-
-# In[8]:
-
 # Function to send success or fail messages to configured slack channel for monitoring reasons
 def send_message_to_slack(alert_message, slack_hook):
     post = {"text": "{0}".format(alert_message)}
     json_data = json.dumps(post)
     req = request.Request(slack_hook, data=json_data.encode('ascii'), headers={'Content-Type': 'application/json'})
     resp = request.urlopen(req)
-
-
-# In[9]:
 
 # Function to write error to a local log file
 def write_error_to_log(error_message):
@@ -233,9 +195,6 @@ def write_error_to_log(error_message):
     logfile = open(logfile_path,'a+')
     logfile.write(i.strftime('%Y-%m-%d %H:%M:%S')+' '+config.general['python_script_name']+': '+error_message+'\n')
 
-
-# In[10]:
-
 # Function to upload files to Google CLoud Storage bucket from config
 def upload_to_google_cloud_storage(file_name_csv,file_name_csv_path):
     storage_client = storage.Client()
@@ -243,18 +202,12 @@ def upload_to_google_cloud_storage(file_name_csv,file_name_csv_path):
     blob = bucket.blob(file_name_csv)
     blob.upload_from_filename(file_name_csv_path)
 
-
-# In[11]:
-
 # Help function to write all fields of whitelisted tables to a local log file for copy & pasting to fields whitelist of config file
 def export_table_fields(field):
     logfile_name = 'fields.txt'
     logfile_path = os.path.join(config.general['csv_cache_folder'],logfile_name)
     logfile = open(logfile_path,'a+')
     logfile.write(field+'\n')
-
-
-# In[12]:
 
 # Execution of complete job
 try:
