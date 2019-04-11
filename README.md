@@ -97,14 +97,14 @@ pip install numpy
 * Create a folder for log files on your Windows server
 * Remember the log folder path for configuration file (later)
 
-7. Store credentials as Windows system variables
+8. Store credentials as Windows system variables
 * Set environment variables for the database credentials
 * Open command prompt on your Windows server
 * Use command to set variables e.g.
 ```setx db1pw “password" /M```
 * A restart of your server is required afterwards
 
-8. Setup Slack Incoming Webhook for sending alerts via Slack
+9. Setup Slack Incoming Webhook for sending alerts via Slack
 * Create an app https://api.slack.com/apps
 * Activate “incoming webhooks”
 * Add New Webhook to Workspace
