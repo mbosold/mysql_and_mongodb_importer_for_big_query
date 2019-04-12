@@ -1,6 +1,6 @@
-# Selective MySQL and MongoDB data import for Google BigQuery (Windows)
+# Selective MySQL and MongoDB data importer for Google BigQuery (Windows)
 
-Automatically Load data of multiple MySQL and MongoDB databases to Google BigQuery with the usage of table and column white/blacklisting.
+Automatically load data of multiple MySQL and MongoDB databases to Google BigQuery with the usage of table and column white/blacklisting.
 
 ## Disclaimer
 
@@ -28,14 +28,14 @@ File Name        | Description
 ---------------- | -------------
 import.py        | actual code including all libraries and functions
 import_config.py | config file (you need to edit this file)
-import.ipynb     | code variant as Jupyter Notebook for easier code editing, if nessary
+import.ipynb     | Jupyter Notebook variant of code for easier code editing (if necessary)
 
 ### Technical Notes
 
 * Don’t use the code without any Python and Windows Server knowledge. Try to understand the code in general to proactively take care about your data quality
 * After some internet research, I came to the conclusion, that the fasted way to load bigger datasets to Google BigQuery is to load the data via Google Cloud CSV files. A regular server is able to load 1-2 GBs of data for each table with this script.
 * For data privacy reasons, you should use the table and field whitelist feature. Therefore, it’s not recommended to sync all database tables including passwords, credit card details or other personal information without any white or blacklisting
-* Google BigQuery will not accept your MySQL and MongoDB data without any further transformation. This is why the transform_dataframe function renames columns, drops empty tables, etc..
+* Google BigQuery will not accept your MySQL and MongoDB data without any further transformation. This is why the transform_dataframe function renames columns, drops empty tables, etc.
 * Google BigQuery is able to create data schemas for the tables dynamically (configured by bigquery job settings). Unfortunately, this method is only taking a tiny part of your dataset to account for choosing the “right” field types. This can lead to wrong data types and therefore the function generate_bq_schema create the data fields dynamically out of the pandas dataframe. Unfortunately, Pandas dataframes can’t handle integer fields with NaN values and transform this fields to floats. This means, you might need to transform the related fields back to integers via Google BigQuery SQL
 * You should never store your credential information directly in the config file. You should always use an encrypted and secured way to store your credentials
 
@@ -47,7 +47,7 @@ import.ipynb     | code variant as Jupyter Notebook for easier code editing, if 
 
 * OS: Windows (tested with Windows Server 2016 Datacenter)
 * Language: Tested with Python 3.6.0 (Anaconda 4.3.1)
-* Packages and Libaries
+* Packages and Libraries
 ```
 pip install SQLAlchemy
 pip install google-cloud
