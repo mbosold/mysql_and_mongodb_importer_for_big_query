@@ -41,7 +41,7 @@ import.ipynb     | Jupyter Notebook variant of code for easier code editing (if 
 
 ### Known Bugs
 
-* Pandas sets integer fields to float, if NAN values exists, this fields have to be transformed with BigQuery Views
+* Pandas sets int64 fields to float, if NAN values exists. This problem is solved with an workaround in the transform_dataframe() function with using the extended Int64 field type, which allows NAN values for integers
 
 ### Requirements
 

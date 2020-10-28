@@ -176,6 +176,8 @@ def transform_dataframe(dataframe,table_name,use_field_whitelist,field_whitelist
         if dataframe[column].dtype != np.number:
             dataframe[column].replace('\n',' ', inplace=True, regex=True)
             dataframe[column].replace('\r',' ', inplace=True, regex=True)
+        if dataframe[column].dtype == 'float64' and (dataframe[column].fillna(-9999) % 1  == 0).all() == True:
+            dataframe[column] = dataframe[column].astype('Int64')
     # Find all fields, where the fieldname starts with "_" and remove the first character from the field name
     dataframe.rename(columns=lambda x: x[1:] if (x[0]=='_') else x, inplace=True)
     return dataframe
