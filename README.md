@@ -36,7 +36,7 @@ import.ipynb     | Jupyter Notebook variant of code for easier code editing (if 
 * After some internet research, I came to the conclusion, that the fasted way to load bigger datasets to Google BigQuery is to load the data via Google Cloud CSV files. A regular server is able to load 1-2 GBs of data for each table with this script.
 * For data privacy reasons, you should use the table and field whitelist feature. Therefore, it’s not recommended to sync all database tables including passwords, credit card details or other personal information without any white or blacklisting
 * Google BigQuery will not accept your MySQL and MongoDB data without any further transformation. This is why the transform_dataframe function renames columns, drops empty tables, etc.
-* Google BigQuery is able to create data schemas for the tables dynamically (configured by bigquery job settings). Unfortunately, this method is only taking a tiny part of your dataset to account for choosing the “right” field types. This can lead to wrong data types and therefore the function generate_bq_schema create the data fields dynamically out of the pandas dataframe. Unfortunately, Pandas dataframes can’t handle integer fields with NaN values and transform this fields to floats. This means, you might need to transform the related fields back to integers via Google BigQuery SQL
+* Google BigQuery is able to create data schemas for the tables dynamically (configured by bigquery job settings). Unfortunately, this method is only taking a tiny part of your dataset to account for choosing the “right” field types. This can lead to wrong data types and therefore the function generate_bq_schema create the data fields dynamically out of the pandas dataframe.
 * You should never store your credential information directly in the config file. You should always use an encrypted and secured way to store your credentials
 
 ### Known Bugs
@@ -169,7 +169,6 @@ slack_hooks.slack_channel_1
 
 * Further modulation e.g. it’s possible to consolidate the functions “mysql_to_gcs” and “mongo_to_gcs”
 * Function for email alerts with log details
-* Workaround for Pandas handling with integers including NaN values
 * Possibility to load data in an incremental way with change keys (not a full load)
 * Web GUI instead of configuration file
 * Further data sources for data sources like ad network APIs   
